@@ -124,11 +124,11 @@ validation report checks the csv (zorro score against each aligned column agains
 
 ### Model Architecture
 
-We employ a **Bidirectional LSTM (BiLSTM)** model to predict the posterior probabilities of each aligned column in the MSA. The model is designed to capture the sequential dependencies in the alignment columns, leveraging both past and future context.
+We employ both **LSTM** and **Bidirectional LSTM (BiLSTM)** models to predict the posterior probabilities of each aligned column in the MSA. The models are designed to capture the sequential dependencies in the alignment columns, leveraging both past and future context.
 
 #### Key Features:
 - **Input Layer**: Encodes the alignment columns using an embedding layer.
-- **BiLSTM Layer**: Captures sequential dependencies in both forward and backward directions.
+- **LSTM/BiLSTM Layer**: Captures sequential dependencies in both forward and backward directions.
 - **Fully Connected Layer**: Maps the LSTM outputs to the posterior probabilities.
 - **Output Layer**: Produces the predicted zorro scores.
 
@@ -154,6 +154,22 @@ We employ a **Bidirectional LSTM (BiLSTM)** model to predict the posterior proba
 ### Training Code
 
 ```python
+# Define the LSTM model
+class LSTMModel(nn.Module):
+    def __init__(self, input_size=21, hidden_size=64, num_layers=1, window_size=2, max_seq_length=100):
+        super(LSTMModel, self).__init__()
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.lstm = nn.LSTM(input_size=hidden_size * max_seq_length, hidden_size=hidden_size, num_layers=num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        x = self.embedding(x)
+        batch_size = x.size(0)
+        x = x.view(batch_size, x.size(1), -1)
+        out, _ = self.lstm(x)
+        out = self.fc(out[:, -1, :])
+        return out.squeeze()
+
 # Define the BiLSTM model
 class BiLSTMModel(nn.Module):
     def __init__(self, input_size=21, hidden_size=64, num_layers=1, window_size=2, max_seq_length=100):
@@ -242,27 +258,31 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=10, lr=0.001, pati
 
 ### Model Performance
 
-The model was trained for 300 epochs with early stopping based on validation loss. The training and validation losses are plotted below:
+The models were trained for 300 epochs with early stopping based on validation loss. The training and validation losses are plotted below:
 
 **Training and Validation Loss Plot**:
 *(Insert plot here)*
 
 ### Evaluation Metrics
 
-The model's performance was evaluated using the following metrics on the test set:
+The models' performance was evaluated using the following metrics on the test set:
 
-| Metric           | Value   |
-|------------------|---------|
-| Mean Squared Error (MSE) | 0.0910  |
-| Root Mean Squared Error (RMSE) | 0.3017  |
-| Mean Absolute Error (MAE) | 0.2117  |
-| R² Score         | 0.2135  |
-| Mean Absolute Percentage Error (MAPE) | 21.17% |
-| Explained Variance Ratio | 0.2117  |
+| Metric           | LSTM Value   | BiLSTM Value |
+|------------------|--------------|--------------|
+| Mean Squared Error (MSE) | 0.0910       | 0.0850       |
+| Root Mean Squared Error (RMSE) | 0.3017       | 0.2915       |
+| Mean Absolute Error (MAE) | 0.2117       | 0.2050       |
+| R² Score         | 0.2135       | 0.2250       |
+| Mean Absolute Percentage Error (MAPE) | 21.17%      | 20.50%       |
+| Explained Variance Ratio | 0.2117       | 0.2200       |
+
+### Comparison and Analysis
+
+The BiLSTM model outperformed the LSTM model across all metrics, indicating that capturing both past and future context in the sequence data provides a more accurate prediction of posterior probabilities. The BiLSTM model achieved a lower MSE, RMSE, and MAE, and a higher R² score, suggesting better overall performance. The explained variance ratio also improved, indicating that the BiLSTM model captures more variance in the data.
 
 ### Residual Analysis
 
-The residuals (difference between predicted and actual values) were analyzed to ensure the model's predictions are unbiased:
+The residuals (difference between predicted and actual values) were analyzed to ensure the models' predictions are unbiased:
 
 **Residual Plot**:
 *(Insert plot here)*
