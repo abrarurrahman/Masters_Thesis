@@ -71,7 +71,7 @@ sudo mv ~/zorro_linux_x86_64 /usr/local/bin/zorro
 
 6️⃣ Add Zorro to PATH:
 ```bash
-echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc && source ~/.bashrc
+export PATH=$PATH:/usr/local/bin
 ```
 
 7️⃣ Verify Installation:
