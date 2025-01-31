@@ -124,15 +124,7 @@ validation report checks the csv (zorro score against each aligned column agains
 
 Here’s the refined README with your requested changes. I’ll structure it to reflect notebook cells as subsections and add placeholder comments for screenshots (you can replace `*(Insert screenshot)*` with actual images from your notebook).
 
----
 
-# 🧬 Predictive Modeling of MSA Posterior Probabilities Using Deep Learning
-
-## 📚 Table of Contents  
-[Previous sections unchanged]  
-- [Data Preprocessing](#-data-preprocessing)  
-- [Model Architecture & Training](#-model-architecture--training)  
-- [Results](#-results)  
 
 ---
 
