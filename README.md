@@ -44,7 +44,7 @@ DataSet/bb3_release/
 
 ## 🛠️ Environment Setup
 
-### Installing Zorro on Windows (WSL)
+### Installing Zorro on Windows To Prepare Data Set for Model Training (WSL)
 
 #### Prerequisites
 - Windows 10/11 with WSL 2
@@ -86,7 +86,7 @@ zorro -h
 ## 📊 Data Preparation
 
 ### FASTA Format Files
-Each sequence folder contains aligned sequences in FASTA format. Example:
+Each sequence folder from balibase data set contains aligned sequences. Since zorro accepts fasta format only, we need to generate fasta version of each file. Attached below sample of what a fasta file looks like. We are using to_fasta_format.py to convert all the aligned sequences we have to fasta format and store the files in a folder named as fasta_format in each subdirectory.
 
 ```fasta
 >1aab_
@@ -97,7 +97,7 @@ Each sequence folder contains aligned sequences in FASTA format. Example:
 
 ### Zorro Score Generation
 
-The system generates Zorro scores for each aligned column in the sequence files. Scores are stored in CSV format:
+Once fasta fomat files are ready, we need to preidct zorro score against each aligned column and then store the data in appropriate format to use for model training later on. IT is done by calc_zorro_scores.sh and files are stored in csv format like the sample attached below.
 
 | column_index | alignment_column | zorro_score |
 |--------------|-----------------|-------------|
@@ -112,7 +112,7 @@ Our validation process ensures:
 - ✅ Character count matches sequence count
 - ✅ CSV rows match sequence length
 - ✅ Data integrity across files
-
+validation report checks the csv (zorro score against each aligned column against there corresponding fasta format file to make sure that we haven't missed any data). validate_csv.sh is used to generate csv report of each folder in the following format.
 **Validation Report Format:**
 
 | File Name | Sequences | Sequence Length | CSV Rows | Column Length | Status |
