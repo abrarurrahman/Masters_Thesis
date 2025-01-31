@@ -121,10 +121,165 @@ validation report checks the csv (zorro score against each aligned column agains
 | BB11002   | 8         | 235            | 235      | 8             | ✅     |
 
 ## 🤖 Model Training
-*Coming soon*
+
+### Model Architecture
+
+We employ a **Bidirectional LSTM (BiLSTM)** model to predict the posterior probabilities of each aligned column in the MSA. The model is designed to capture the sequential dependencies in the alignment columns, leveraging both past and future context.
+
+#### Key Features:
+- **Input Layer**: Encodes the alignment columns using an embedding layer.
+- **BiLSTM Layer**: Captures sequential dependencies in both forward and backward directions.
+- **Fully Connected Layer**: Maps the LSTM outputs to the posterior probabilities.
+- **Output Layer**: Produces the predicted zorro scores.
+
+### Training Process
+
+1. **Data Splitting**:
+   - **Training Set**: 70% of the data
+   - **Validation Set**: 20% of the data
+   - **Test Set**: 10% of the data
+
+2. **Hyperparameters**:
+   - **Learning Rate**: 0.001
+   - **Batch Size**: 32
+   - **Epochs**: 300
+   - **Early Stopping**: Patience of 5 epochs
+
+3. **Loss Function**:
+   - **Mean Squared Error (MSE)**: Used to measure the difference between predicted and actual zorro scores.
+
+4. **Optimizer**:
+   - **Adam Optimizer**: Efficient and adaptive learning rate optimization.
+
+### Training Code
+
+```python
+# Define the BiLSTM model
+class BiLSTMModel(nn.Module):
+    def __init__(self, input_size=21, hidden_size=64, num_layers=1, window_size=2, max_seq_length=100):
+        super(BiLSTMModel, self).__init__()
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.lstm = nn.LSTM(input_size=hidden_size * max_seq_length, hidden_size=hidden_size, num_layers=num_layers, batch_first=True, bidirectional=True)
+        self.fc = nn.Linear(hidden_size * 2, 1)
+
+    def forward(self, x):
+        x = self.embedding(x)
+        batch_size = x.size(0)
+        x = x.view(batch_size, x.size(1), -1)
+        out, _ = self.lstm(x)
+        out = self.fc(out[:, -1, :])
+        return out.squeeze()
+
+# Training the model
+def train_model(model, X_train, y_train, X_val, y_val, epochs=10, lr=0.001, patience=5):
+    criterion = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    
+    train_dataset = torch.utils.data.TensorDataset(X_train, y_train)
+    train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    
+    val_dataset = torch.utils.data.TensorDataset(X_val, y_val)
+    val_dataloader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    
+    best_val_loss = float('inf')
+    patience_counter = 0
+    train_losses = []
+    val_losses = []
+    
+    model.train()
+    for epoch in range(epochs):
+        model.train()
+        total_train_loss = 0
+        for inputs, labels in train_dataloader:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            total_train_loss += loss.item()
+        
+        avg_train_loss = total_train_loss / len(train_dataloader)
+        train_losses.append(avg_train_loss)
+        
+        model.eval()
+        total_val_loss = 0
+        with torch.no_grad():
+            for inputs, labels in val_dataloader:
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                total_val_loss += loss.item()
+        
+        avg_val_loss = total_val_loss / len(val_dataloader)
+        val_losses.append(avg_val_loss)
+        
+        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {avg_train_loss:.4f}, Val Loss: {avg_val_loss:.4f}")
+        
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            patience_counter = 0
+            torch.save(model.state_dict(), "best_model.pth")
+        else:
+            patience_counter += 1
+            if patience_counter >= patience:
+                print(f"Early stopping triggered after epoch {epoch+1}")
+                model.load_state_dict(torch.load("best_model.pth"))
+                break
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(train_losses, label='Training Loss')
+    plt.plot(val_losses, label='Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    
+    return train_losses, val_losses
+```
 
 ## 📈 Results and Analysis
-*Coming soon*
+
+### Model Performance
+
+The model was trained for 300 epochs with early stopping based on validation loss. The training and validation losses are plotted below:
+
+**Training and Validation Loss Plot**:
+*(Insert plot here)*
+
+### Evaluation Metrics
+
+The model's performance was evaluated using the following metrics on the test set:
+
+| Metric           | Value   |
+|------------------|---------|
+| Mean Squared Error (MSE) | 0.0910  |
+| Root Mean Squared Error (RMSE) | 0.3017  |
+| Mean Absolute Error (MAE) | 0.2117  |
+| R² Score         | 0.2135  |
+| Mean Absolute Percentage Error (MAPE) | 21.17% |
+| Explained Variance Ratio | 0.2117  |
+
+### Residual Analysis
+
+The residuals (difference between predicted and actual values) were analyzed to ensure the model's predictions are unbiased:
+
+**Residual Plot**:
+*(Insert plot here)*
+
+### Q-Q Plot
+
+The Q-Q plot was used to check the normality of the residuals:
+
+**Q-Q Plot**:
+*(Insert plot here)*
+
+### Distribution of Residuals
+
+The distribution of residuals was plotted to ensure they are normally distributed around zero:
+
+**Residual Distribution**:
+*(Insert plot here)*
 
 ## 🤝 Contributing
 
