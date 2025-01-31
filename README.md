@@ -122,15 +122,28 @@ validation report checks the csv (zorro score against each aligned column agains
 
 ## 🤖 Model Training and Dat Pre-Processing for Training
 
-🔍 Data Preprocessing
-1. One-Hot Encoding of Alignment Columns
-Notebook Cell Reference: Preprocessing: Encoding Alignment Columns
-Alignment columns are converted into numerical features using one-hot encoding. Each residue (20 amino acids + gap "-") is mapped to a unique index, and sequences are padded to ensure uniform length.
+Here’s the refined README with your requested changes. I’ll structure it to reflect notebook cells as subsections and add placeholder comments for screenshots (you can replace `*(Insert screenshot)*` with actual images from your notebook).
 
-Example:
+---
 
-python
-Copy
+# 🧬 Predictive Modeling of MSA Posterior Probabilities Using Deep Learning
+
+## 📚 Table of Contents  
+[Previous sections unchanged]  
+- [Data Preprocessing](#-data-preprocessing)  
+- [Model Architecture & Training](#-model-architecture--training)  
+- [Results](#-results)  
+
+---
+
+## 🔍 Data Preprocessing  
+
+### 1. One-Hot Encoding of Alignment Columns  
+**Notebook Cell Reference**: *Preprocessing: Encoding Alignment Columns*  
+Alignment columns are converted into numerical features using **one-hot encoding**. Each residue (20 amino acids + gap "-") is mapped to a unique index, and sequences are padded to ensure uniform length.  
+
+**Example**:  
+```python
 residues = list("ACDEFGHIKLMNPQRSTVWY-")  
 residue_to_idx = {res: idx for idx, res in enumerate(residues)}  
 
@@ -140,14 +153,17 @@ def encode_alignment_column(column_str):
 # Pad sequences to max length  
 max_seq_length = max(data['alignment_column'].apply(lambda x: len(x.split('-'))))  
 X = np.array([encode_alignment_column(col) + [0]*(max_seq_length - len(col.split('-'))) for col in data['alignment_column']], dtype=np.int64)  
-(Insert screenshot of encoded alignment columns from the notebook)
+```  
 
-2. Sliding Window Creation
-Notebook Cell Reference: Preprocessing: Backward Sliding Windows
-Contextual dependencies are captured using backward sliding windows of size 2 (current + preceding columns):
+*(Insert screenshot of encoded alignment columns from the notebook)*  
 
-python
-Copy
+---
+
+### 2. Sliding Window Creation  
+**Notebook Cell Reference**: *Preprocessing: Backward Sliding Windows*  
+Contextual dependencies are captured using backward sliding windows of size 2 (current + preceding columns):  
+
+```python  
 def create_backward_windows(X, window_size=2):  
     windows = []  
     for i in range(window_size, len(X)):  
@@ -156,7 +172,25 @@ def create_backward_windows(X, window_size=2):
     return np.array(windows)  
 
 X_windows = create_backward_windows(X, window_size=2)  
-(Insert screenshot of sliding window visualization)
+```  
+
+*(Insert screenshot of sliding window visualization)*  
+
+---
+
+### 3. Train-Validation-Test Split  
+**Notebook Cell Reference**: *Preprocessing: Data Splitting*  
+Data is split into training (70%), validation (20%), and test (10%) sets:  
+
+```python  
+X_train, X_temp, y_train, y_temp = train_test_split(X_windows, y[window_size:], test_size=0.3, random_state=42)  
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.33, random_state=42)  
+```  
+
+
+
+
+Let me know if you’d like to refine any section further! 😊
 
 ### Model Architecture
 
