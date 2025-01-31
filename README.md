@@ -1,4 +1,3 @@
-Here’s the complete README file, structured end-to-end with all sections, including preprocessing, model training, results, and placeholders for screenshots. You can copy and paste this directly into your GitHub repository.
 
 ---
 
