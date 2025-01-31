@@ -261,7 +261,8 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=10, lr=0.001, pati
 The models were trained for 300 epochs with early stopping based on validation loss. The training and validation losses are plotted below:
 
 **Training and Validation Loss Plot**:
-*(Insert plot here)*
+![image](https://github.com/user-attachments/assets/112b3698-3736-4fa8-95af-7c8fb32b0dcb)
+
 
 ### Evaluation Metrics
 
@@ -285,21 +286,26 @@ The BiLSTM model outperformed the LSTM model across all metrics, indicating that
 The residuals (difference between predicted and actual values) were analyzed to ensure the models' predictions are unbiased:
 
 **Residual Plot**:
-*(Insert plot here)*
+![image](https://github.com/user-attachments/assets/01d4ac31-cbf2-49e0-8029-a3cc7306bc05)
+
+
 
 ### Q-Q Plot
 
 The Q-Q plot was used to check the normality of the residuals:
 
 **Q-Q Plot**:
-*(Insert plot here)*
+![image](https://github.com/user-attachments/assets/9d4f49eb-0f4c-4db2-a2b2-a7ddc8549470)
+
 
 ### Distribution of Residuals
 
 The distribution of residuals was plotted to ensure they are normally distributed around zero:
 
 **Residual Distribution**:
-*(Insert plot here)*
+![image](https://github.com/user-attachments/assets/a1211339-b0d5-485f-a624-5aafd4318586)
+![image](https://github.com/user-attachments/assets/f104d9f7-db6f-4bc2-9608-215dc74f0e4d)
+
 
 ## 🤝 Contributing
 
