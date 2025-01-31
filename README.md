@@ -27,7 +27,7 @@ BaliBase is a comprehensive benchmark dataset used for evaluating Multiple Seque
 
 ## 📂 Directory Structure
 
-```
+
 DataSet/bb3_release/
 ├── RV11/
 │   ├── BB11001/
@@ -40,7 +40,7 @@ DataSet/bb3_release/
 ├── RV30/
 ├── RV40/
 └── RV50/
-```
+
 
 ## 🛠️ Environment Setup
 
@@ -121,9 +121,6 @@ validation report checks the csv (zorro score against each aligned column agains
 | BB11002   | 8         | 235            | 235      | 8             | ✅     |
 
 ## 🤖 Model Training and Dat Pre-Processing for Training
-
-Here’s the refined README with your requested changes. I’ll structure it to reflect notebook cells as subsections and add placeholder comments for screenshots (you can replace `*(Insert screenshot)*` with actual images from your notebook).
-
 
 
 ---
