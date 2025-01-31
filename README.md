@@ -27,7 +27,7 @@ BaliBase is a comprehensive benchmark dataset used for evaluating Multiple Seque
 
 ## 📂 Directory Structure
 
-
+```
 DataSet/bb3_release/
 ├── RV11/
 │   ├── BB11001/
@@ -40,7 +40,7 @@ DataSet/bb3_release/
 ├── RV30/
 ├── RV40/
 └── RV50/
-
+```
 
 ## 🛠️ Environment Setup
 
