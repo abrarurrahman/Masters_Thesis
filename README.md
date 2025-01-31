@@ -122,41 +122,6 @@ validation report checks the csv (zorro score against each aligned column agains
 
 ## 🤖 Model Training and Dat Pre-Processing for Training
 
-🔍 Data Preprocessing
-1. One-Hot Encoding of Alignment Columns
-Notebook Cell Reference: Preprocessing: Encoding Alignment Columns
-Alignment columns are converted into numerical features using one-hot encoding. Each residue (20 amino acids + gap "-") is mapped to a unique index, and sequences are padded to ensure uniform length.
-
-Example:
-
-python
-Copy
-residues = list("ACDEFGHIKLMNPQRSTVWY-")  
-residue_to_idx = {res: idx for idx, res in enumerate(residues)}  
-
-def encode_alignment_column(column_str):  
-    return [residue_to_idx.get(c, 0) for c in column_str.split('-')]  
-
-# Pad sequences to max length  
-max_seq_length = max(data['alignment_column'].apply(lambda x: len(x.split('-'))))  
-X = np.array([encode_alignment_column(col) + [0]*(max_seq_length - len(col.split('-'))) for col in data['alignment_column']], dtype=np.int64)  
-(Insert screenshot of encoded alignment columns from the notebook)
-
-2. Sliding Window Creation
-Notebook Cell Reference: Preprocessing: Backward Sliding Windows
-Contextual dependencies are captured using backward sliding windows of size 2 (current + preceding columns):
-
-python
-Copy
-def create_backward_windows(X, window_size=2):  
-    windows = []  
-    for i in range(window_size, len(X)):  
-        window = X[i - window_size : i + 1]  
-        windows.append(window)  
-    return np.array(windows)  
-
-X_windows = create_backward_windows(X, window_size=2)  
-(Insert screenshot of sliding window visualization)
 
 ### Model Architecture
 
